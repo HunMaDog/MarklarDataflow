@@ -4,3 +4,6 @@
 [submodule "3rdparty/wigwag"]
 	path = 3rdparty/wigwag
 	url = https://github.com/koplyarov/wigwag.git
+[submodule "3rdparty/spdlog"]
+	path = 3rdparty/spdlog
+	url = https://github.com/gabime/spdlog.git
