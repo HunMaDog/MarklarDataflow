@@ -7,3 +7,6 @@
 [submodule "3rdparty/spdlog"]
 	path = 3rdparty/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "3rdparty/sole"]
+	path = 3rdparty/sole
+	url = https://github.com/r-lyeh-archived/sole.git
