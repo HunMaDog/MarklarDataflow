@@ -54,7 +54,8 @@ Yet another data flow solution written in C++.
      - Silent - Not use wake up signal
      - Single - Maximum one connection is allowed
      - Locked - Not accept any new connection
-   + Can be modified while running
+     - Can be modified while running
+   + Can be added or removed while running
    + Custom pins can be created using the Pin asbtract class
  - Connection
    + Accept function connection
