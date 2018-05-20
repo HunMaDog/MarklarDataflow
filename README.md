@@ -9,7 +9,7 @@ Yet another data flow solution written in C++.
     {
     public:
         HelloWorld(std::string const & name)
-            : TriggerNode(name)
+            : Node<Name, Trigger>(name)
         {
             set_trigger_function([this](){ queuing_task(); });
         }
