@@ -50,7 +50,8 @@ Yet another data flow solution written in C++.
      - Accept - Accept incoming data
      - Publish - Publishing data towards the node
      - Fixed - Always publishing the last arrived data and it has only one at the same time
-     - Optional - Not required for node's valid operation and not use wake up signal
+     - Optional - Not required for node's valid operation
+     - Silent - Not use wake up signal
      - Single - Maximum one connection is allowed
      - Locked - Not accept any new connection
    + Can be modified while running
