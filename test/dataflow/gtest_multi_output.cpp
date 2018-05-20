@@ -88,7 +88,7 @@ public:
     {
         Timed::set_interval(interval);
 
-        add_pin(std::make_shared<TimerOutputPin>("output"));
+        add_pin(std::make_shared<TimerOutputPin>("output", [this](){ queuing_task(); }));
     }
 
     void process() final
@@ -106,15 +106,12 @@ public:
     {
         Checklist::push_check([&](){ return Pin::is_ready(); });
 
-        add_pin(std::make_shared<TimerInputPin>("input"));
-        pin<TimerInputPin>("input")->callback([this](){ queuing_task(); });
-        add_pin(std::make_shared<uint64OutputPin>("output"));
+        add_pin(std::make_shared<TimerInputPin>("input", [this](){ queuing_task(); }));
+        add_pin(std::make_shared<uint64OutputPin>("output", [this](){ queuing_task(); }));
     }
 
     void process() final
     {
-//        auto data = Input::pin<TimerPtr>("input")->pop();
-//        data->step();
         pin<uint64OutputPin>("output")->push(pin<TimerInputPin>("input")->pop_front()->lifeTime());
     }
 };
@@ -128,7 +125,7 @@ public:
     {
         Timed::set_interval(interval);
 
-        add_pin(std::make_shared<uint64OutputPin>("output"));
+        add_pin(std::make_shared<uint64OutputPin>("output", [this](){ queuing_task(); }));
     }
 
     void process() final
@@ -149,9 +146,8 @@ public:
     {
         Checklist::push_check([&](){ return Pin::is_ready(); });
 
-        add_pin(std::make_shared<uint64InputPin>("input"));
-        pin<uint64InputPin>("input")->callback([this](){ queuing_task(); });
-        add_pin(std::make_shared<boolOutputPin>("output"));
+        add_pin(std::make_shared<uint64InputPin>("input", [this](){ queuing_task(); }));
+        add_pin(std::make_shared<boolOutputPin>("output", [this](){ queuing_task(); }));
     }
 
     void process() final

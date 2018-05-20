@@ -30,19 +30,14 @@ public:
     // TODO :: grouping params to reduce the number
     InputPin(
         std::string const & name
-//        , std::condition_variable & condition
+        , std::function<void()> && wake_up_func
         , Flag const & flag = (Flag::Accept | Flag::Publish)
     )
         : Pin(name, flag)
-//        , condition_wakeup_(condition)
+        , wake_up_func_(std::move(wake_up_func))
         , max_buffer_size_(10)
     {}
     ~InputPin() noexcept = default;
-
-    void callback(std::function<void()> && func)
-    {
-        func_ = std::move(func);
-    }
 
     // Element access
     size_t buffer_limit() const
@@ -173,8 +168,8 @@ public:
 //            logger_->log(spdlog::level::info, "data droped");
         }
 
-        if(Flag::None == (flag_ & Flag::Optional))
-            func_();
+        if(Flag::None == (flag_ & Flag::Silent) && wake_up_func_)
+            wake_up_func_();
     }
 
     // Overrides
@@ -248,7 +243,7 @@ public:
 
 private:
     // TODO :: elnevezes, ellenorzesek, constructorba, outputra is atvinni, etc.
-    std::function<void()> func_;
+    std::function<void()> wake_up_func_;
 
     mutable std::shared_mutex mutex_buffer_;
     std::atomic<size_t> max_buffer_size_;

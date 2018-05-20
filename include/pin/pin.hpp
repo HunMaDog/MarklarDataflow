@@ -46,10 +46,11 @@ public:
         , Accept = 1 // Accept arriving data
         , Publish = 2 // Publishing arrived data
         , Fixed = 4 // Allways publishing the last arrived data and only one data has
-        , Optional = 8 // Not required for node's valid operation and not give wake up signal
-        , Single = 16 // Maximum 1 connection is allowed
-        , Locked = 32 // Not accept any new connection
-        , Wait = 64 // Wait until the buffer has free space
+        , Optional = 8 // Not required for node's valid operation
+        , Silent = 16 // Not use wake up signal
+        , Single = 32 // Maximum 1 connection is allowed
+        , Locked = 64 // Not accept any new connection
+//        , Wait = 128 // Wait until the buffer has free space
     };
 
     Pin(

@@ -34,11 +34,11 @@ public:
     // TODO :: grouping params to reduce the number
     OutputPin(
         std::string const & name
-//        , std::condition_variable & condition
+        , std::function<void()> && wake_up_func
         , Flag const & flag = (Flag::Accept | Flag::Publish)
     )
         : Pin(name, flag)
-//        , condition_wakeup_(condition)
+        , wake_up_func_(std::move(wake_up_func))
         , max_buffer_size_(10)
     {}
     ~OutputPin() noexcept = default;
@@ -240,9 +240,8 @@ protected:
                 func(d);
         }
 
-// TODO :: callback
-//        if(Flag::None == (flag_ & Flag::Optional))
-//            condition_wakeup_.notify_one();
+        if(Flag::None == (flag_ & Flag::Silent) && wake_up_func_)
+            wake_up_func_();
 
         return new_connection->id();
     }
@@ -280,9 +279,8 @@ protected:
                 input_pin->push(d);
         }
 
-// TODO :: callback
-//        if(Flag::None == (flag_ & Flag::Optional))
-//            condition_wakeup_.notify_one();
+        if(Flag::None == (flag_ & Flag::Silent) && wake_up_func_)
+            wake_up_func_();
 
         return new_connection->id();
     }
@@ -299,7 +297,7 @@ protected:
     }
 
 private:
-//    std::condition_variable & condition_wakeup_;
+    std::function<void()> wake_up_func_;
 
     mutable std::shared_mutex mutex_buffer_;
     std::atomic<size_t> max_buffer_size_;
@@ -320,102 +318,3 @@ std::shared_ptr<OutputPin<_DataT>> OutputPinFactory(
 
 } // namespace pin
 } // namespace marklar_dataflow
-
-// Data Input/Output
-// - shared_ptr with abstract_data(template?)
-// - buffer can contain more than 1 element
-// - push add element to buffer move or copy
-// - pop remove element from buffer
-
-// --- static data only contains 1 element and not removed after play out
-// --- input only can take 1 static data, or multiple normal data
-// --- only clear if the pin is disconnected
-
-// Resource Input/Output
-// - weak_ptr with resource pointer
-// - only contain 1 element
-// - push if it contains element it will be replace
-// - pop not remove the element
-
-// Signal
-// - connect to a slot
-// - can send an abstract_data(template?)
-
-// Slot
-// - call the setted function pointer with parameters
-
-/*
-protected:
-    sole::uuid const & connect_func(
-        std::function<void(_DataT const &)> const & func
-        , TokenProperties const & properties
-    )
-    {
-        if(!connectable())
-            throw error::Exception("not allowed connectiong to emitter pin", 0);
-
-        wigwag::token token;
-        if(properties.worker_)
-            token = push_signal_.connect(func, properties.handler_);
-        else
-            token = push_signal_.connect(properties.worker_, func, properties.handler_);
-
-        auto new_connection = std::make_shared<connection::Connection>(std::move(token));
-        connection::save(new_connection, { connection_pool_, nullptr } );
-
-        // TODO :: redesign/rethink
-        if(
-            Flag::Fixed == (flag_ & Flag::Fixed)
-            && Flag::Publish == (flag_ & Flag::Publish)
-        )
-        {
-            std::unique_lock<std::shared_mutex> lock(mutex_buffer_);
-
-            for (auto& d : buffer_)
-                func(d);
-        }
-
-        condition_wakeup_.notify_one();
-
-        return new_connection->id();
-    }
-
-    // TODO :: template parameters for adding wigwag specific connection options
-    sole::uuid const & connect_pin(
-        std::shared_ptr<InputPin<_DataT>> const & input_pin
-        , TokenProperties const & properties
-    )
-    {
-        if(!connectable())
-            throw error::Exception("not allowed connectiong to emitter pin", 0);
-
-        if(!input_pin->connectable())
-            throw error::Exception("not allowed connectiong to receiver pin", 0);
-
-        wigwag::token token;
-        if(properties.worker_)
-            token = push_signal_.connect([input_pin](_DataT const & data){ input_pin->push(data); }, properties.handler_);
-        else
-            token = push_signal_.connect(properties.worker_, [input_pin](_DataT const & data){ input_pin->push(data); }, properties.handler_);
-
-        auto new_connection = std::make_shared<connection::Connection>(std::move(token));
-        connection::save(new_connection, { connection_pool_, input_pin->connection_pool() } );
-
-        // TODO :: redesign/rethink
-        if(
-            Flag::Fixed == (flag_ & Flag::Fixed)
-            && Flag::Publish == (flag_ & Flag::Publish)
-        )
-        {
-            std::unique_lock<std::shared_mutex> lock(mutex_buffer_);
-
-            for (auto& d : buffer_)
-                input_pin->push(d);
-        }
-
-        condition_wakeup_.notify_one();
-
-        return new_connection->id();
-    }
-
-*/
