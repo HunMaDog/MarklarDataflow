@@ -19,7 +19,7 @@ namespace marklar_dataflow
 {
 namespace policy
 {
-namespace pin
+namespace extender
 {
 
 // TODO :: costume iterator

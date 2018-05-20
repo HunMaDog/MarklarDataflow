@@ -1,10 +1,10 @@
-#include <policy/pin/pin.hpp>
+#include <policy/extender/pin.hpp>
 
 // Marklar headers
 // 3rd party library headers
 // C++ standard Library headers
 
-using marklar_dataflow::policy::pin::Pin;
+using marklar_dataflow::policy::extender::Pin;
 using marklar_dataflow::error::Exception;
 
 Pin::const_iterator Pin::begin() const

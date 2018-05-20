@@ -4,10 +4,10 @@
 #include <node/node.hpp>
 #include <pin/input_pin.hpp>
 #include <pin/output_pin.hpp>
-#include <policy/id/uuid.hpp>
-#include <policy/wait/timed.hpp>
-#include <policy/wait/checklist.hpp>
-#include <policy/pin/pin.hpp>
+#include <policy/identifier/uuid.hpp>
+#include <policy/scheduler/timed.hpp>
+#include <policy/scheduler/checklist.hpp>
+#include <policy/extender/pin.hpp>
 
 #include <wigwag/thread_task_executor.hpp>
 
@@ -56,10 +56,10 @@ typedef std::shared_ptr<Timer> TimerPtr;
 // Command
 using marklar_dataflow::command::Command;
 // Policy
-using marklar_dataflow::policy::id::Uuid;
-using marklar_dataflow::policy::pin::Pin;
-using marklar_dataflow::policy::wait::Timed;
-using marklar_dataflow::policy::wait::Checklist;
+using marklar_dataflow::policy::identifier::Uuid;
+using marklar_dataflow::policy::extender::Pin;
+using marklar_dataflow::policy::scheduler::Timed;
+using marklar_dataflow::policy::scheduler::Checklist;
 // Node
 using marklar_dataflow::command::Dashboard;
 using TimedNode = marklar_dataflow::node::Node<Uuid, Timed>;

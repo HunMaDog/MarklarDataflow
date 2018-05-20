@@ -31,19 +31,19 @@ typedef std::shared_ptr<spdlog::logger> LoggerPtr;
 namespace node
 {
 
-template<class _PolicyIdT, class _PolicyWaitT, class... _OtherPolicyT>
+template<class _PolicyIdentifierT, class _PolicySchedulerT, class... _PolicyExtenderT>
 class MARKLAR_EXPORT Node
         : public command::Dashboard // For controling node
-        , public _PolicyIdT // For storage in containers
-        , public _PolicyWaitT // For trigger the main loop
-        , public _OtherPolicyT... // Pin and other behavior/additional policy
+        , public _PolicyIdentifierT // For storage in containers
+        , public _PolicySchedulerT // For trigger the main loop
+        , public _PolicyExtenderT... // Pin and other behavior/additional policy
 {
 public:
     Node(std::string const & name)
         : Dashboard()
-        , _PolicyIdT(name)
-        , _PolicyWaitT(running_)
-        , _OtherPolicyT()...
+        , _PolicyIdentifierT(name)
+        , _PolicySchedulerT(running_)
+        , _PolicyExtenderT()...
         , running_(false)
         , controller_(this)
         , thread_task_(nullptr)
@@ -124,7 +124,7 @@ protected:
             return;
 
         /* Wait policy preparation for waiting */
-        _PolicyWaitT::preparation();
+        _PolicySchedulerT::preparation();
         /* Node preaparation for running the core */
         preparation();
 
@@ -155,7 +155,7 @@ protected:
             thread_task_->wait();
 
             /* Wait policy postprocess after finishing the runing */
-            _PolicyWaitT::termination();
+            _PolicySchedulerT::termination();
             /* Node postprocess after finishing the runing */
             termination();
         }
@@ -202,7 +202,7 @@ private:
         {
             while(
                 running_
-                && _PolicyWaitT::is_ready()
+                && _PolicySchedulerT::is_ready()
             )
                 process();
         }

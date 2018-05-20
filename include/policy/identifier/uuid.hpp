@@ -11,32 +11,19 @@ namespace marklar_dataflow
 {
 namespace policy
 {
-namespace id
+namespace identifier
 {
 
 class MARKLAR_EXPORT Uuid
 {
 public:
-    Uuid(std::string const & name)
-        : uuid_(sole::uuid4())
-        , name_(name)
-    {}
+    Uuid(std::string const & name);
     virtual ~Uuid() = default;
 
-    std::string & name()
-    {
-        return name_;
-    }
+    std::string & name();
+    std::string const & name() const;
 
-    std::string const & name() const
-    {
-        return name_;
-    }
-
-    sole::uuid const & id() const
-    {
-        return uuid_;
-    }
+    sole::uuid const & id() const;
 
 protected:
     sole::uuid uuid_;

@@ -12,21 +12,16 @@ namespace marklar_dataflow
 {
 namespace policy
 {
-namespace id
+namespace identifier
 {
 
 class MARKLAR_EXPORT Name
 {
 public:
-    Name(std::string const & name)
-        : name_(name)
-    {}
+    Name(std::string const & name);
     virtual ~Name() noexcept = default;
 
-    const std::string& name() const
-    {
-        return name_;
-    }
+    const std::string& name() const;
 
 protected:
     std::string name_;

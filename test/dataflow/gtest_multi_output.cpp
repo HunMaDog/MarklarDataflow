@@ -4,12 +4,12 @@
 #include <node/node.hpp>
 #include <pin/input_pin.hpp>
 #include <pin/output_pin.hpp>
-#include <policy/id/name.hpp>
-#include <policy/id/uuid.hpp>
-#include <policy/wait/checklist.hpp>
-#include <policy/wait/timed.hpp>
-#include <policy/wait/trigger.hpp>
-#include <policy/pin/pin.hpp>
+#include <policy/identifier/name.hpp>
+#include <policy/identifier/uuid.hpp>
+#include <policy/scheduler/checklist.hpp>
+#include <policy/scheduler/timed.hpp>
+#include <policy/scheduler/trigger.hpp>
+#include <policy/extender/pin.hpp>
 
 #include <wigwag/thread_task_executor.hpp>
 
@@ -59,12 +59,12 @@ typedef std::shared_ptr<Timer> TimerPtr;
 using marklar_dataflow::command::Command;
 namespace cmd = marklar_dataflow::command;
 // Policy
-using marklar_dataflow::policy::id::Name;
-using marklar_dataflow::policy::id::Uuid;
-using marklar_dataflow::policy::pin::Pin;
-using marklar_dataflow::policy::wait::Checklist;
-using marklar_dataflow::policy::wait::Timed;
-using marklar_dataflow::policy::wait::Trigger;
+using marklar_dataflow::policy::identifier::Name;
+using marklar_dataflow::policy::identifier::Uuid;
+using marklar_dataflow::policy::extender::Pin;
+using marklar_dataflow::policy::scheduler::Checklist;
+using marklar_dataflow::policy::scheduler::Timed;
+using marklar_dataflow::policy::scheduler::Trigger;
 // Node
 using marklar_dataflow::command::Dashboard;
 using TimedNode = marklar_dataflow::node::Node<Uuid, Timed>;
