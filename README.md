@@ -1,6 +1,37 @@
 # MarklarDataflow
 Yet another data flow solution written in C++.
 
+```cpp
+    ...
+    
+    class HelloWorld
+        : public Node<Name, Trigger>
+    {
+    public:
+        HelloWorld(std::string const & name)
+            : TriggerNode(name)
+        {
+            set_trigger_function([this](){ queuing_task(); });
+        }
+
+    protected:
+        void process() final
+        {
+            std::cout << "Hello world" << std::endl;
+        }
+    };
+    
+    ...
+    
+    void main()
+    {
+        HelloWorld hi("hello");
+        hi.start();
+        hi.trigger();
+        hi.stop();
+    }
+```
+
 # Feature
  - Thread pool
    + Can be adjusted separately to the nodes
