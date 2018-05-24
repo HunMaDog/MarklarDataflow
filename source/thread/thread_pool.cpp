@@ -9,8 +9,24 @@
 using marklar_dataflow::error::Exception;
 using marklar_dataflow::thread::ThreadPool;
 using marklar_dataflow::thread::ThreadRAII;
-using marklar_dataflow::thread::ThreadTask;
+using marklar_dataflow::thread::BaseTask;
 
+// ThreadRAII
+ThreadRAII::ThreadRAII(std::thread  && thread)
+    : thread_(std::forward<std::thread>(thread))
+{}
+
+ThreadRAII::ThreadRAII(ThreadRAII  && threadraii)
+    : thread_(std::forward<std::thread>(threadraii.thread_))
+{}
+
+ThreadRAII::~ThreadRAII()
+{
+    if(thread_.joinable())
+        thread_.join();
+}
+
+// Thread pool
 ThreadPool::ThreadPool()
     : ThreadPool{std::max(std::thread::hardware_concurrency(), 2u) - 1u} /* always create at least one thread */
 {}
@@ -40,7 +56,7 @@ size_t ThreadPool::queue_size() const
     return queue_.size();
 }
 
-void ThreadPool::push_front(std::shared_ptr<ThreadTask> task)
+void ThreadPool::push_front(std::shared_ptr<BaseTask> task)
 {
     task->queued_ = true;
 
@@ -51,7 +67,7 @@ void ThreadPool::push_front(std::shared_ptr<ThreadTask> task)
     condition_queue_.notify_one();
 }
 
-void ThreadPool::push_back(std::shared_ptr<ThreadTask> task)
+void ThreadPool::push_back(std::shared_ptr<BaseTask> task)
 {
     task->queued_ = true;
 
@@ -62,7 +78,7 @@ void ThreadPool::push_back(std::shared_ptr<ThreadTask> task)
     condition_queue_.notify_one();
 }
 
-void ThreadPool::erase(std::shared_ptr<ThreadTask> & task)
+void ThreadPool::erase(std::shared_ptr<BaseTask> task)
 {
     std::unique_lock<std::mutex> lock(mutex_queue_);
 
@@ -111,23 +127,20 @@ void ThreadPool::stop()
     condition_queue_.notify_all();
 
     threads_.clear();
-//    for(auto& thread : threads_)
-//        if(thread.joinable())
-//            thread.join();
 }
 
 void ThreadPool::run()
 {
     while(running_)
     {
-        std::shared_ptr<ThreadTask> task = wait_pop();
+        std::shared_ptr<BaseTask> task = wait_pop();
 
         if(task)
             task->execute();
     }
 }
 
-std::shared_ptr<ThreadTask> ThreadPool::wait_pop()
+std::shared_ptr<BaseTask> ThreadPool::wait_pop()
 {
     std::unique_lock<std::mutex> lock(mutex_queue_);
 
@@ -149,7 +162,7 @@ std::shared_ptr<ThreadTask> ThreadPool::wait_pop()
     )
         return nullptr;
 
-    std::shared_ptr<ThreadTask> task = std::move(queue_.front());
+    std::shared_ptr<BaseTask> task = std::move(queue_.front());
     queue_.pop_front();
     task->queued_ = false;
 

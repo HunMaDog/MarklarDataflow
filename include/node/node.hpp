@@ -38,6 +38,9 @@ class MARKLAR_EXPORT Node
         , public _PolicySchedulerT // For trigger the main loop
         , public _PolicyExtenderT... // Pin and other behavior/additional policy
 {
+private:
+    typedef Node<_PolicyIdentifierT, _PolicySchedulerT, _PolicyExtenderT...> ThisNode;
+
 public:
     Node(std::string const & name)
         : Dashboard()
@@ -127,17 +130,8 @@ protected:
         _PolicySchedulerT::preparation();
         /* Node preaparation for running the core */
         preparation();
-
-        if(!thread_task_)
-            thread_task_ = std::make_shared<thread::ThreadTask>(
-                [this]()
-                {
-                    this->task();
-                }
-            );
-
-        if(!thread_pool_)
-            thread_pool_ = std::make_shared<thread::ThreadPool>(1);
+        /* Initialize task and thread pool */
+        preparation_thread();
 
         running_ = true;
 
@@ -150,10 +144,8 @@ protected:
         {
             running_ = false;
 
-// TODO flaged
-//            thread_pool_->erase(thread_task_);
-            thread_task_->wait();
-
+            /* Stop thread handling and wait the running task finishing up */
+            termination_thread();
             /* Wait policy postprocess after finishing the runing */
             _PolicySchedulerT::termination();
             /* Node postprocess after finishing the runing */
@@ -178,6 +170,25 @@ protected:
         thread_pool_->push_back(thread_task_);
     }
 
+    void preparation_thread()
+    {
+        if(!thread_task_)
+            thread_task_ = std::make_shared<thread::NodeTask<ThisNode>>(this, &ThisNode::task);
+
+        if(!thread_pool_)
+            thread_pool_ = std::make_shared<thread::ThreadPool>(1);
+    }
+
+    void termination_thread()
+    {
+        if(thread_pool_ && thread_task_)
+            thread_pool_->erase(thread_task_);
+
+        if(thread_task_)
+            if(!thread_task_->is_avaliable())
+                thread_task_->wait();
+    }
+
     /* Flag what is indicate the run state */
     std::atomic<bool> running_;
 
@@ -188,7 +199,7 @@ protected:
     command::Controller controller_;
 
     /* Thread task and pool what can run the task */
-    std::shared_ptr<thread::ThreadTask> thread_task_;
+    std::shared_ptr<thread::NodeTask<ThisNode>> thread_task_;
     std::shared_ptr<thread::ThreadPool> thread_pool_;
 
     LoggerPtr logger_;

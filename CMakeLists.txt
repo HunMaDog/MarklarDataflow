@@ -109,14 +109,21 @@ set(MARKLARDATAFLOW_HEADERS
 #    ${MARKLARDATAFLOW_DIR_INCLUDE}/pin/signal_pin.hpp
 #    ${MARKLARDATAFLOW_DIR_INCLUDE}/pin/slot_pin.hpp
 
-    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/identifier/uuid.hpp
-    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/identifier/name.hpp
+#    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/connector/callback.hpp
+#    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/connector/connection.hpp
 
     ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/extender/pin.hpp
+
+    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/identifier/uuid.hpp
+    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/identifier/name.hpp
 
     ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/scheduler/checklist.hpp
     ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/scheduler/timed.hpp
     ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/scheduler/trigger.hpp
+
+#    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/storage/proxy.hpp
+#    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/storage/reference.hpp
+#    ${MARKLARDATAFLOW_DIR_INCLUDE}/policy/storage/value.hpp
 
     ${MARKLARDATAFLOW_DIR_INCLUDE}/thread/thread_pool.hpp
     ${MARKLARDATAFLOW_DIR_INCLUDE}/thread/thread_task.hpp
@@ -147,10 +154,10 @@ set(MARKLARDATAFLOW_SOURCES
 #    ${MARKLARDATAFLOW_DIR_SOURCE}/pin/signal_pin.cpp
 #    ${MARKLARDATAFLOW_DIR_SOURCE}/pin/slot_pin.cpp
 
+    ${MARKLARDATAFLOW_DIR_SOURCE}/policy/extender/pin.cpp
+
     ${MARKLARDATAFLOW_DIR_SOURCE}/policy/identifier/uuid.cpp
     ${MARKLARDATAFLOW_DIR_SOURCE}/policy/identifier/name.cpp
-
-    ${MARKLARDATAFLOW_DIR_SOURCE}/policy/extender/pin.cpp
 
     ${MARKLARDATAFLOW_DIR_SOURCE}/policy/scheduler/checklist.cpp
     ${MARKLARDATAFLOW_DIR_SOURCE}/policy/scheduler/timed.cpp

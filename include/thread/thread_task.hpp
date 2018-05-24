@@ -12,6 +12,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <thread>
 #include <type_traits>
 #include <utility>
@@ -34,21 +35,81 @@ namespace marklar_dataflow
 namespace thread
 {
 
-class ThreadTask
+class MARKLAR_EXPORT BaseTask
 {
 private:
     friend class ThreadPool;
 
 public:
-    ThreadTask(std::function<void()> && func);
+    BaseTask()
+        : queued_(false)
+        , progress_(false)
+    {}
 
-    ~ThreadTask() = default;
-    ThreadTask(ThreadTask const & rhs) = delete;
-    ThreadTask& operator=(ThreadTask const & rhs) = delete;
-    ThreadTask(ThreadTask && other) = default;
-    ThreadTask& operator=(ThreadTask && other) = default;
+    ~BaseTask() = default;
+    BaseTask(BaseTask const & rhs) = delete;
+    BaseTask& operator=(BaseTask const & rhs) = delete;
+    BaseTask(BaseTask && other) = default;
+    BaseTask& operator=(BaseTask && other) = default;
 
-    void wait();
+    bool is_queued() const
+    {
+        return queued_;
+    }
+
+    bool is_progress() const
+    {
+        return progress_;
+    }
+
+    bool is_avaliable() const
+    {
+        return !(progress_ || queued_);
+    }
+
+protected:
+    std::atomic<bool> queued_;
+    std::atomic<bool> progress_;
+
+private:
+    virtual void execute() = 0;
+};
+
+template<class _TaskOwnerT>
+class MARKLAR_EXPORT NodeTask final
+    : public BaseTask
+{
+public:
+    typedef void (_TaskOwnerT::*_TaskFunctionT)(void);
+
+    NodeTask(_TaskOwnerT * task_owner, _TaskFunctionT task_function)
+        : BaseTask()
+        , task_owner_(task_owner)
+        , task_function_(task_function)
+    {
+    }
+
+    ~NodeTask() = default;
+    NodeTask(NodeTask const & rhs) = delete;
+    NodeTask& operator=(NodeTask const & rhs) = delete;
+    NodeTask(NodeTask && other) = default;
+    NodeTask& operator=(NodeTask && other) = default;
+
+    void wait()
+    {
+        if(is_avaliable())
+            return;
+
+        std::shared_lock<std::shared_mutex> lock(mutex_wait_);
+
+        condition_wait_.wait(
+            lock
+            , [this]()
+            {
+                return is_avaliable();
+            }
+        );
+    }
 
     template< class _RepT, class _PeriodT >
     std::cv_status wait_for( std::chrono::duration<_RepT, _PeriodT> const & timeout_duration )
@@ -56,25 +117,28 @@ public:
         if(is_avaliable())
             return std::cv_status::no_timeout;
 
-        std::unique_lock<std::mutex> lock(mutex_wait_);
+        std::shared_lock<std::shared_mutex> lock(mutex_wait_);
 
         return condition_wait_.wait_for(lock, timeout_duration);
     }
 
-    bool is_queued() const;
-    bool is_progress() const;
-    bool is_avaliable() const;
-
 private:
-    void execute();
+    void execute() final
+    {
+        std::unique_lock<std::shared_mutex> lock(mutex_wait_);
 
-    mutable std::mutex mutex_wait_;
-    std::condition_variable condition_wait_;
+        progress_ = true;
+        (task_owner_->*task_function_)();
+        progress_ = false;
 
-    std::atomic<bool> queued_;
-    std::atomic<bool> progress_;
+        condition_wait_.notify_all();
+    }
 
-    std::function<void()> func_;
+    _TaskOwnerT * task_owner_;
+    _TaskFunctionT task_function_;
+
+    mutable std::shared_mutex mutex_wait_;
+    std::condition_variable_any condition_wait_;
 };
 
 } // namespace thread

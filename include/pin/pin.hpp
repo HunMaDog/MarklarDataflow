@@ -50,6 +50,7 @@ public:
         , Silent = 16 // Not use wake up signal
         , Single = 32 // Maximum 1 connection is allowed
         , Locked = 64 // Not accept any new connection
+// TODO :: design it
 //        , Wait = 128 // Wait until the buffer has free space
     };
 

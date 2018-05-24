@@ -5,7 +5,7 @@
 #include <chrono>
 #include <iostream>
 
-using marklar_dataflow::thread::ThreadTask;
+using marklar_dataflow::thread::NodeTask;
 
 using namespace std::chrono_literals;
 

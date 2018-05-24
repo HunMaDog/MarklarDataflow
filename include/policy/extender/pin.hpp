@@ -99,6 +99,6 @@ private:
     PinMap pins_;
 };
 
-} // namespace pin
+} // namespace extender
 } // namespace policy
 } // namespace marklar_dataflow

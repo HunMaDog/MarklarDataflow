@@ -5,8 +5,7 @@
 #include <chrono>
 #include <iostream>
 
-using marklar_dataflow::thread::ThreadTask;
-using marklar_dataflow::thread::ThreadPool;
+namespace t = marklar_dataflow::thread;
 
 using namespace std::chrono_literals;
 
@@ -51,12 +50,20 @@ namespace
 
 TEST(gtest_thread_thread_pool, thread_pool_size_default)
 {
-    ThreadPool tp;
+    t::ThreadPool tp;
 
     const auto num_of_thread = std::max(std::thread::hardware_concurrency(), 2u) - 1u;
 
+    EXPECT_EQ(tp.thread_number(), num_of_thread);
+}
+
+TEST(gtest_thread_thread_pool, thread_pool_size)
+{
+    constexpr size_t num_of_thread = 7;
+    t::ThreadPool tp(num_of_thread);
 
     EXPECT_EQ(tp.thread_number(), num_of_thread);
 }
 
 } // namespace
+

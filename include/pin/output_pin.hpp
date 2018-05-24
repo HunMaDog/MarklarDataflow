@@ -24,7 +24,7 @@ namespace pin
 {
 
 template<typename _DataT>
-class MARKLAR_EXPORT OutputPin
+class MARKLAR_EXPORT OutputPin final
     : public Pin
 {
 protected:

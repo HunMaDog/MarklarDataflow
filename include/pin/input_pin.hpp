@@ -23,7 +23,7 @@ namespace pin
 {
 
 template<typename _DataT>
-class MARKLAR_EXPORT InputPin
+class MARKLAR_EXPORT InputPin final
     : public Pin
 {
 public:
@@ -230,7 +230,7 @@ public:
         if(Flag::None == (flag_ & Flag::Publish)) /* not publishing data */
             return false;
 
-        std::shared_lock lock(mutex_buffer_);
+        std::unique_lock lock(mutex_buffer_);
 
         if (
             buffer_.empty() /* not empty */
@@ -242,7 +242,6 @@ public:
     }
 
 private:
-    // TODO :: elnevezes, ellenorzesek, constructorba, outputra is atvinni, etc.
     std::function<void()> wake_up_func_;
 
     mutable std::shared_mutex mutex_buffer_;

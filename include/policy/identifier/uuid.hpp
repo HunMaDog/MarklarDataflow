@@ -31,6 +31,6 @@ protected:
     std::string name_;
 };
 
-} // namespace id
+} // namespace identifier
 } // namespace policy
 } // namespace marklar_dataflow
