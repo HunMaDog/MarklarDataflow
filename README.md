@@ -23,12 +23,15 @@ Yet another data flow solution written in C++.
     
     ...
     
-    void main()
+    int main()
     {
         HelloWorld hi("hello");
+    
         hi.start();
         hi.trigger();
         hi.stop();
+    
+        return 0;
     }
 ```
 
@@ -40,8 +43,8 @@ Yet another data flow solution written in C++.
    + Custom commands can be created using public interface
  - Policy based node implementation
    + Identifier policy
-   + Wait policy
-   + Pin policy
+   + Scheduler policy
+   + Extender policy
    + Custom policy can be created
  - Pin
    + 1:N outbound connections
@@ -61,7 +64,7 @@ Yet another data flow solution written in C++.
    + Accept function connection
    + Can be separated from both sides
    + Connections can be added or removed while running
- - Flow control (aka wait policy)
+ - Flow control (aka scheduler policy)
    + Event driven
    + Data driven
    + Time driven
