@@ -26,6 +26,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -pthread") # Threading
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror") # Warning
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -pedantic-errors") # Pedantic
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdollars-in-identifiers") # Sole $
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3") # optimalization
 
 # With switchs
 # ###########################
@@ -218,7 +219,7 @@ set(MARKLARDATAFLOW_TEST_FILES
 # ###########################
 
 # Create Dataflow Engine library
-add_library(MarklarDataflow
+add_library(MarklarDataflow SHARED
     ${MARKLARDATAFLOW_HEADERS}
     ${MARKLARDATAFLOW_SOURCES}
 )
