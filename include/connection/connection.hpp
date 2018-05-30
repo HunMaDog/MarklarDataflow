@@ -74,8 +74,8 @@ protected:
     std::weak_ptr<ConnectionPool> receiver_pool_;
 
 private:
-    const sole::uuid uuid_;
-    const wigwag::token token_;
+    sole::uuid const uuid_;
+    wigwag::token const token_;
 };
 
 } // namespace connection
