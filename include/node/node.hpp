@@ -109,6 +109,14 @@ public:
     }
 
 protected:
+    /* Calling before start the node inner cycle */
+    virtual void preparation()
+    {}
+
+    /* Calling after finished the node inner cycle */
+    virtual void termination()
+    {}
+
     virtual void passthrough_impl() override
     {
         // TODO
@@ -128,10 +136,10 @@ protected:
 
         /* Wait policy preparation for waiting */
         _PolicySchedulerT::preparation();
-        /* Node preaparation for running the core */
-        preparation();
         /* Initialize task and thread pool */
         preparation_thread();
+        /* Node preaparation for running the core */
+        preparation();
 
         running_ = true;
 
@@ -229,14 +237,6 @@ private:
 //              LOG(Error, MakeString() << name_ << ": unknown error while processing");
         }
     }
-
-    /* Calling before start the node inner cycle */
-    virtual void preparation()
-    {}
-
-    /* Calling after finished the node inner cycle */
-    virtual void termination()
-    {}
 };
 
 } // namespace node
