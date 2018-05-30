@@ -10,7 +10,7 @@ Name::Name(std::string const & name)
     : name_(name)
 {}
 
-const std::string& Name::name() const
+std::string const & Name::name() const
 {
     return name_;
 }

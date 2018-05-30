@@ -26,7 +26,7 @@ public:
     sole::uuid const & id() const;
 
 protected:
-    sole::uuid uuid_;
+    sole::uuid const uuid_;
 
     std::string name_;
 };

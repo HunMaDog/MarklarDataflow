@@ -21,10 +21,10 @@ public:
     Name(std::string const & name);
     virtual ~Name() noexcept = default;
 
-    const std::string& name() const;
+    std::string const & name() const;
 
 protected:
-    std::string name_;
+    std::string const name_;
 };
 
 } // namespace identifier
