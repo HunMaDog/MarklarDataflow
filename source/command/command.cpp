@@ -19,9 +19,9 @@ void Command::execute(Dashboard * dashboard)
 
     try
     {
-        preparation_properties();
+        preparation();
         command(dashboard);
-        termination_properties();
+        termination();
 
         result = Result::Success;
     }

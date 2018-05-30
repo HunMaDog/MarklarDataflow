@@ -67,8 +67,8 @@ protected:
         , connection::TokenProperties const & properties = {}
     );
 
-    virtual void preparation_properties() {};
-    virtual void termination_properties() {};
+    virtual void preparation() {};
+    virtual void termination() {};
     virtual void command(Dashboard * dashboard) = 0;
 
     /* Storage information for command executing */
