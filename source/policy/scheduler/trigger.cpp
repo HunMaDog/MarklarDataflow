@@ -12,18 +12,17 @@ Trigger::Trigger(std::atomic<bool> & running)
 
 void Trigger::trigger()
 {
-    if(!running_)
+    if(!running_ || triggered_)
         return;
 
-// TODO :: multiple call from threads
+    // TODO :: multiple call from threads
     std::unique_lock<std::mutex> lock(mutex_triggered_);
 
     triggered_ = true;
 
     trigger_function_();
 
-// TODO :: wait from params dat
-//        if()
+    // TODO :: wait or not wait
     condition_triggered_.wait(
         lock
         , [this]()
@@ -46,6 +45,8 @@ void Trigger::termination()
 
 bool Trigger::is_ready()
 {
+    std::unique_lock<std::mutex> lock(mutex_triggered_);
+
     if(triggered_)
     {
         triggered_ = false;

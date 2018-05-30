@@ -24,6 +24,7 @@ public:
     virtual ~Trigger() noexcept = default;
 
     void trigger();
+    void wait();
 
 protected:
     void set_trigger_function(std::function<void()> && func);
